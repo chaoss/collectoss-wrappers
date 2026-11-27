@@ -54,11 +54,6 @@ jobs:
             --cov-report=xml \
             --cov-report=html
 
-      - name: Add coverage to the job summary
-        if: ${{ (success() || failure()) && matrix.publish_coverage }}
-        run: |
-          echo "## Test coverage" >> "$GITHUB_STEP_SUMMARY"
-          uv run --python ${{ matrix.env }} coverage report --format=markdown >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload coverage report to GitHub
         if: ${{ (success() || failure()) && matrix.publish_coverage }}
