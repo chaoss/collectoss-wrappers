@@ -47,7 +47,7 @@ jobs:
           enable-cache: true
       - name: Run Tests
         run: |
-          uv run --python ${{ matrix.python-version }} pytest \
+          uv run --dev --python ${{ matrix.python-version }} pytest \
             --color=always \
             --cov \
             --cov-report=term \
