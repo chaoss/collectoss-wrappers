@@ -70,6 +70,8 @@ jobs:
         if: ${{ (success() || failure()) && matrix.publish_coverage && hashFiles('disclosure/coverage.xml') != '' }}
         uses: codecov/codecov-action@v7
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: chaoss/collectoss-wrappers
           files: disclosure/coverage.xml
           flags: unit-disclosure
           disable_search: true
