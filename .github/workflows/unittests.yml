@@ -45,8 +45,9 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-      - name: Run Tests
+      - name: Run Tests (disclosure)
         run: |
+          cd disclosure
           uv run --dev --python ${{ matrix.python-version }} pytest \
             --color=always \
             --cov \
@@ -70,7 +71,7 @@ jobs:
         uses: codecov/codecov-action@v7
         with:
           files: coverage.xml
-          flags: unit
+          flags: unit-disclosure
           disable_search: true
           use_oidc: true
           fail_ci_if_error: false
