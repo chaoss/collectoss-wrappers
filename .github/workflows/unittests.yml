@@ -70,7 +70,7 @@ jobs:
         if: ${{ (success() || failure()) && matrix.publish_coverage && hashFiles('disclosure/coverage.xml') != '' }}
         uses: codecov/codecov-action@v7
         with:
-          files: coverage.xml
+          files: disclosure/coverage.xml
           flags: unit-disclosure
           disable_search: true
           use_oidc: true
