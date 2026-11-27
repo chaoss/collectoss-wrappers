@@ -25,9 +25,6 @@ classifiers = [
 ]
 dependencies = []  # stdlib only, so the wrapper stays a single tiny universal wheel
 
-[project.optional-dependencies]
-test = ["pytest>=7", "pytest-cov>=4.1"]
-
 [project.urls]
 Homepage = "https://github.com/chaoss/disclosure"
 Issues = "https://github.com/chaoss/disclosure/issues"
@@ -45,3 +42,9 @@ addopts = "--cov=disclosure --cov-branch --cov-report=term-missing --cov-fail-un
 [tool.coverage.run]
 relative_files = true
 source = ["disclosure"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-cov>=7.1.0",
+]
