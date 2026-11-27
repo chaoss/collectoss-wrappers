@@ -49,7 +49,7 @@ jobs:
         run: |
           cd disclosure
           uv run --dev --python ${{ matrix.python-version }} pytest \
-            --color=always \
+            --color=yes \
             --cov \
             --cov-report=term \
             --cov-report=xml \
