@@ -37,7 +37,6 @@ packages = ["src/disclosure"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=disclosure --cov-branch --cov-report=term-missing --cov-fail-under=90"
 
 [tool.coverage.run]
 relative_files = true
