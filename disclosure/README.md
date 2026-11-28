@@ -1,84 +1,69 @@
-# disclosure (Python wrapper) — proof of concept
+# disclosure (Python wrapper)
 
-A thin Python wrapper around the [CHAOSS `disclosure`](https://github.com/chaoss/disclosure)
-CLI, so it can be installed from PyPI and used from Python.
+A thin Python wrapper around the [CHAOSS `disclosure`](https://github.com/chaoss/disclosure) CLI, so you can run it and get its results from Python.
 
-> **Status: proof of concept.** This wraps the prebuilt `disclosure` binary; it
-> is not an in-process binding. Published to **TestPyPI** only for now, to prove
-> the approach is useful before deciding on a permanent home and maintenance
-> plan (see [issue #82](https://github.com/chaoss/disclosure/issues/82)).
+> **Status: alpha, not on PyPI yet.** Install it from this repository as shown below. Any package on PyPI or TestPyPI that claims to be this wrapper is not ours.
 
-## How it works
-
-On first use the package downloads the prebuilt `disclosure` binary for your
-platform from the GitHub release, verifies it against the release
-`checksums.txt`, and caches it (under `~/.cache/disclosure-cli/` by default).
-- Downloads: verify the archive checksum before extraction.
-- Cache installation: write the complete binary to a temporary file, then
-  replace the destination atomically.
-- Existing cache: reject empty files, symlinks, and non-executable POSIX files.
-  Errors identify the cache path; remove the unusable file and retry.
-- CLI errors: return `2` for wrapper failures, including process-start failures;
-  preserve the scanner's `0` and `1` results.
-
-This is the simplest thing that works everywhere from a single wheel. A
-production version would instead **bundle the binary in platform-specific
-wheels** (per Simon Willison's "Distributing Go binaries" write-up that Andrew
-linked in [issue #82](https://github.com/chaoss/disclosure/issues/82)),
-removing the runtime download.
-
-## Use it as a CLI
+## Install
 
 ```sh
-uvx disclosure scan --format=json          # run without installing
-# or
-pip install disclosure
-disclosure scan /path/to/repo
+pip install "git+https://github.com/chaoss/collectoss-wrappers#subdirectory=disclosure"
 ```
 
-## Use it from Python
+Or run it without installing, with [uv](https://docs.astral.sh/uv/):
+
+```sh
+uvx --from "git+https://github.com/chaoss/collectoss-wrappers#subdirectory=disclosure" disclosure scan --format=json
+```
+
+To get the same code every time, pin a commit: `git+https://github.com/chaoss/collectoss-wrappers@<commit>#subdirectory=disclosure`.
+
+## Use it
+
+As a CLI it behaves like the native binary, exit codes included:
+
+```sh
+disclosure scan /path/to/repo --format=json
+```
+
+From Python, `scan()` and `text()` return the JSON report as a `dict`:
 
 ```python
 import disclosure
 
 report = disclosure.scan("/path/to/repo", min_confidence="medium")
-print(report)                              # already a dict
-
 findings = disclosure.text("I used Claude to write this")
 print(disclosure.version())
 ```
 
-`scan()` and `text()` return the parsed JSON report as a Python object.
+## How it works
 
-## Install from TestPyPI
+On first use, the wrapper downloads the prebuilt `disclosure` release for your platform from GitHub, checks it against the release `checksums.txt`, and caches the binary. Later calls run the cached binary as a separate process: this is not an in-process binding.
 
-```sh
-pip install --index-url https://test.pypi.org/simple/ disclosure
-```
+If the download does not match its checksum, or the cached file is a symlink, empty or not executable, the wrapper refuses to run it and tells you which file to remove.
 
-If the name `disclosure` is already taken on the target index, the package is
-published as `disclosure-cli`; then run it with
-`uvx --from disclosure-cli disclosure ...`.
+| exit code | meaning |
+|---|---|
+| `0` | no AI detected |
+| `1` | AI detected |
+| `2` | error, including wrapper errors like a failed download |
 
-## Publishing the PoC (maintainer notes)
+From Python, a failed download or a broken cache raises `BinaryResolutionError`, and a failed scan raises `DisclosureError`.
 
-```sh
-cd python
-python -m build
-python -m twine upload --repository testpypi dist/*
-```
+A later version could bundle the binary in platform-specific wheels, so nothing is downloaded at runtime.
 
-The wrapped binary version is pinned by `DISCLOSURE_VERSION` in
-`src/disclosure/_binary.py` (currently `1.0.0`). Override it at runtime with the
-`DISCLOSURE_VERSION` env var for local testing.
+## Configuration
+
+| variable | default | what it does |
+|---|---|---|
+| `DISCLOSURE_VERSION` | `1.0.0` | Version of the `disclosure` release to use. Meant for local testing. |
+| `DISCLOSURE_CACHE_DIR` | `$XDG_CACHE_HOME` or `~/.cache` (`%LOCALAPPDATA%` on Windows) | Base directory of the cache. The binary goes in `disclosure-cli/<version>/` inside it. |
 
 ## Tests
 
-- Install test dependencies: `python -m pip install -e "./python[test]"`.
-- Run from the repository root: `python -m pytest python/tests`.
-- Test suite: mocked downloads and local stub binaries; no release downloads.
-- Coverage gate: at least 90% combined statement and branch coverage for the
-  Python wrapper. Test dependencies are not runtime dependencies.
-- GitHub Actions: Python 3.9 and 3.14 on Linux; Python 3.14 on macOS and Windows.
-- CI results: available after the workflow runs; local results do not establish
-  that every operating-system/Python combination passes.
+See [Running the tests](../CONTRIBUTING.md#running-the-tests) in CONTRIBUTING. In short:
+
+```sh
+cd disclosure
+uv run --dev pytest
+```
