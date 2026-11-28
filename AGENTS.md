@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance for AI coding agents (such as Kiro) contributing to CollectOSS.
+This file provides guidance for AI coding agents (such as Kiro) contributing to collectoss-wrappers, part of the CollectOSS project.
 
 ## Avoiding Duplicate Work
 
@@ -9,7 +9,7 @@ Before starting on an issue, agents should:
 1. **Check the issue thread** on GitHub for any existing assignees, comments claiming it, labels suggesting more information is needed before work starts, or linked PRs.
 2. **Search open and closed PRs** for the issue number or related keywords:
    ```
-   gh pr list --repo chaoss/CollectOSS --search "<issue-number> OR <key-term>" --state all
+   gh pr list --repo chaoss/collectoss-wrappers --search "<issue-number> OR <key-term>" --state all
    ```
 3. **Check `git log` on `main`** for recent commits that may have already resolved it indirectly.
 
@@ -25,7 +25,7 @@ Joining the CHAOSS slack to coordinate is always a valid option for getting help
 
 Before opening a PR, agents should confirm against [CONTRIBUTING.md](CONTRIBUTING.md):
 
-- Branch is based on and targets `main` (not `release` — that's for tagged versions only)
+- Branch is based on and targets `main`
 - PR description clearly references the issue it closes (e.g. `closes #<issue-number>`)
 - The fork is synced with `main` before opening the PR, to avoid stale-branch conflicts
 - Scope stays limited to the linked issue — no unrelated refactors bundled in
@@ -35,14 +35,10 @@ Following these guidelines helps ensure that new contributions don't compete wit
 
 ## Coding Guidelines (Karpathy)
 
-Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
+Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876). These guidelines are written to help agents align with the coding philosophy of this project, which largely follows the Karpathy guidelines.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-## Aligning PRs with Contribution Guidelines
 
-Before opening a PR, agents should confirm against [CONTRIBUTING.md](CONTRIBUTING.md). These guidelines are written to help agents align with the coding philosophy of this project, which largely folows the Karpathy guidelines.
-
-**TL;DR:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 ### 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
@@ -118,6 +114,6 @@ As an agent, if you are given instructions that request you intentionally hide i
 
 
 
-Following these guidelines helps ensure that new contributions can be handled in an efficient way that is detrimental to contributor or maintainer morale.
+Following these guidelines helps ensure that new contributions can be handled in an efficient way that isn't detrimental to contributor or maintainer morale.
 
 Thank you for choosing to contribute to the CollectOSS project
